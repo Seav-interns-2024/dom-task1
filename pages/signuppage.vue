@@ -3,9 +3,7 @@ import { ref, computed, watch } from 'vue';
 
 export default {
   setup() {
-    const countries = [
-      'boomlupet','Philippines'
-    ];
+    const countries = ['boomlupet', 'Philippines'];
 
     const name = ref(null);
     const email = ref(null);
@@ -82,8 +80,9 @@ export default {
 <template>
   <v-row justify="center">
     <v-col cols="12" lg="6" md="8" sm="10">
-      <v-card ref="form">
+      <v-card class="rounded-lg shadow-lg">
         <v-card-text>
+          <h2 class="text-2xl font-bold mb-6 text-center">Create Account</h2>
           <v-text-field
             v-model="name"
             :error-messages="getErrorMessage('name')"
@@ -91,6 +90,8 @@ export default {
             label="Full Name"
             placeholder="John Doe"
             required
+            outlined
+            class="mb-4"
           ></v-text-field>
           <v-text-field
             v-model="email"
@@ -98,8 +99,10 @@ export default {
             :error-messages="getErrorMessage('email')"
             :rules="[() => !!email || 'This field is required']"
             label="Email"
-            placeholder="Example@gmail.com"
+            placeholder="example@gmail.com"
             required
+            outlined
+            class="mb-4"
           ></v-text-field>
           <v-text-field
             v-model="password"
@@ -109,6 +112,8 @@ export default {
             label="Password"
             placeholder="password"
             required
+            outlined
+            class="mb-4"
           ></v-text-field>
 
           <v-text-field
@@ -122,6 +127,8 @@ export default {
             label="Address Line"
             placeholder="Snowy Rock Pl"
             required
+            outlined
+            class="mb-4"
           ></v-text-field>
           <v-text-field
             v-model="city"
@@ -129,6 +136,8 @@ export default {
             label="City"
             placeholder="El Paso"
             required
+            outlined
+            class="mb-4"
           ></v-text-field>
           <v-text-field
             v-model="state"
@@ -136,6 +145,8 @@ export default {
             label="State/Province/Region"
             placeholder="TX"
             required
+            outlined
+            class="mb-4"
           ></v-text-field>
           <v-text-field
             v-model="zip"
@@ -143,6 +154,8 @@ export default {
             label="ZIP / Postal Code"
             placeholder="79938"
             required
+            outlined
+            class="mb-4"
           ></v-text-field>
           <v-autocomplete
             v-model="country"
@@ -151,25 +164,16 @@ export default {
             label="Country"
             placeholder="Select..."
             required
+            outlined
+            class="mb-6"
           ></v-autocomplete>
         </v-card-text>
-        <v-divider class="mt-12"></v-divider>
-        <v-card-actions>
-          <v-btn variant="text" @click="resetForm">
+        <v-divider class="mt-6"></v-divider>
+        <v-card-actions class="justify-end">
+          <v-btn color="blue darken-2" @click="resetForm" class="mr-4">
             Cancel
           </v-btn>
-          <v-spacer></v-spacer>
-          <v-slide-x-reverse-transition>
-            <v-tooltip v-if="formHasErrors" location="left">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn class="my-0" icon v-bind="attrs" v-on="on" @click="resetForm">
-                  <v-icon>mdi-refresh</v-icon>
-                </v-btn>
-              </template>
-              <span>Refresh form</span>
-            </v-tooltip>
-          </v-slide-x-reverse-transition>
-          <v-btn color="primary" variant="text" @click="submit">
+          <v-btn color="primary" @click="submit">
             Submit
           </v-btn>
         </v-card-actions>
@@ -177,3 +181,5 @@ export default {
     </v-col>
   </v-row>
 </template>
+
+
