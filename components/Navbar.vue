@@ -41,20 +41,13 @@
         <li>
           <a href="/contact" class="text-white hover:text-gray-200">Contact</a>
         </li>
-<<<<<<< HEAD
-          <Icon name="uil:bell" color="white" class="flex items-center mr-2 h-12 w-auto"></Icon>
-        
         </ul>
+
       </div>
     </nav>
+    
   </template>
   
-=======
-      </ul>
-    </div>
-  </nav>
-</template>
-
 <script setup>
 import { ref } from 'vue';
 
@@ -64,4 +57,4 @@ function toggleDropdown() {
   isDropdownOpen.value = !isDropdownOpen.value;
 }
 </script>
->>>>>>> fffafe3cbaf684e62b096af5cf520b5824fa00e8
+

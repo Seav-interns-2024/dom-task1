@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "nuxt-icon": "^0.6.10",
-    "sass": "^1.72.0"
+    "sass": "^1.72.0",
+    "vuetify-nuxt-module": "^0.13.1"
   }
 }
