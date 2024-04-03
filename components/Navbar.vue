@@ -21,7 +21,7 @@
           <a href="/contact" class="text-white hover:text-gray-200">Contact</a>
         </li>
           <Icon name="uil:bell" color="white" class="flex items-center mr-2 h-12 w-auto"></Icon>
-          tests
+        
         </ul>
       </div>
     </nav>
