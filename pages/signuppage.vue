@@ -177,7 +177,11 @@ export default {
             Submit
           </v-btn>
         </v-card-actions>
+        
       </v-card>
+      <p class="text-center text-gray-600 mt-6">
+        Already have an account? <router-link to="/loginpage" class="text-blue-500">Go to login page</router-link>
+      </p>
     </v-col>
   </v-row>
 </template>
