@@ -17,11 +17,11 @@
               The Catalyst of the Maritime Fleet of Tomorrow
             </h1>
             
-            <router-link to="loginpage" class="flex lg:justify-start mb-4 md:ml-20 lg:ml-20 text-white">
+            <nuxt-link to="loginpage" class="flex lg:justify-start mb-4 md:ml-20 lg:ml-20 text-white">
               <v-btn variant="outlined" size="large">
                 Log In
               </v-btn>
-            </router-link>
+            </nuxt-link>
           </div>
         </div>
       </v-parallax>
