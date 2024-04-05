@@ -12,7 +12,6 @@ function toggleDropdown() {
   <nav class="bg-gray-950">
     <div class="flex items-center justify-between px-6 py-4 md:px-10 lg:px-16 xl:px-20">
       <div class="flex items-center">
-        <!-- Make the logo clickable -->
         <a href="/" class="flex items-center">
           <img src="/assets/logo.png" alt="Logo" class="h-12 md:h-16 w-auto">
           <h1 class="text-blue-500 font-bold text-xl md:text-2xl ml-2 md:ml-4">Sea<span class="text-white">versity</span></h1>
@@ -21,12 +20,10 @@ function toggleDropdown() {
 
       <div class="md:hidden relative">
         <button @click="toggleDropdown" class="text-white hover:text-gray-200 focus:outline-none">
-          <!-- Icon for mobile dropdown -->
           <Icon name="uil:bars" color="white" class="h-12 w-auto"></Icon>
         </button>
         <transition name="fade">
           <ul v-show="isDropdownOpen" class="absolute top-16 right-0 bg-gray-950 z-10 border border-gray-700 rounded mt-2">
-            <!-- Dropdown menu items -->
             <li>
               <a href="/" class="block py-2 px-4 text-white hover:text-gray-200">Home</a>
             </li>
@@ -40,7 +37,6 @@ function toggleDropdown() {
               <a href="/contact" class="block py-2 px-4 text-white hover:text-gray-200">Contact</a>
             </li>
             <li>
-              <!-- Sign up button in the dropdown -->
               <router-link to="signuppage" class="flex text-white">
                 <v-btn>
                   Sign Up
@@ -51,7 +47,6 @@ function toggleDropdown() {
         </transition>
       </div>
 
-      <!-- Navigation links for larger screens -->
       <ul class="hidden md:flex items-center space-x-8">
         <li>
           <a href="/" class="text-white hover:text-gray-200">Home</a>
@@ -66,7 +61,6 @@ function toggleDropdown() {
           <a href="/contact" class="text-white hover:text-gray-200">Contact</a>
         </li>
         <li>
-          <!-- Sign up button for larger screens -->
           <router-link to="signuppage" class="flex text-white">
             <v-btn>
               Sign Up
