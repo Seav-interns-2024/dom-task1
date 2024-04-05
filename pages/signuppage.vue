@@ -1,80 +1,86 @@
 <script>
-import { ref, computed, watch } from 'vue';
+import { useFormStore } from '@/store'; 
 
 export default {
   setup() {
-    const countries = ['boomlupet', 'Philippines'];
-
-    const name = ref(null);
-    const email = ref(null);
-    const password = ref(null);
-    const address = ref(null);
-    const city = ref(null);
-    const state = ref(null);
-    const zip = ref(null);
-    const country = ref(null);
-    const errorMessages = ref('');
-    const formHasErrors = ref(false);
-
-    const form = computed(() => ({
-      name: name.value,
-      email: email.value,
-      password: password.value,
-      address: address.value,
-      city: city.value,
-      state: state.value,
-      zip: zip.value,
-      country: country.value
-    }));
-
-    const addressCheck = () => {
-      errorMessages.value = address.value && !name.value ? `Hey! I'm required` : '';
-      return true;
-    };
-
-    const resetForm = () => {
-      errorMessages.value = '';
-      formHasErrors.value = false;
-      [name, email, password, address, city, state, zip, country].forEach(field => {
-        field.value = null;
-      });
-    };
+    const formStore = useFormStore();
+    const suffixes = ['Jr.', 'Sr.', 'II', 'III', 'IV'];
+    const genders = ['Male', 'Female', 'Other'];
 
     const submit = () => {
-      formHasErrors.value = false;
-      [name, email, password, address, city, state, zip, country].forEach(field => {
-        if (!field.value) formHasErrors.value = true;
-      });
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        contactNumber,
+        dateOfBirth,
+        dataPrivacyConsent
+      } = formStore;
+
+      if (!firstName) {
+        formStore.errorMessages.firstName = 'First Name is required';
+      } else {
+        formStore.errorMessages.firstName = '';
+      }
+
+      if (!lastName) {
+        formStore.errorMessages.lastName = 'Last Name is required';
+      } else {
+        formStore.errorMessages.lastName = '';
+      }
+
+      if (!email) {
+        formStore.errorMessages.email = 'Email is required';
+      } else if (!validateEmail(email)) {
+        formStore.errorMessages.email = 'Invalid email format';
+      } else {
+        formStore.errorMessages.email = '';
+      }
+
+      if (!password) {
+        formStore.errorMessages.password = 'Password is required';
+      } else {
+        formStore.errorMessages.password = '';
+      }
+
+      if (!contactNumber) {
+        formStore.errorMessages.contactNumber = 'Contact Number is required';
+      } else {
+        formStore.errorMessages.contactNumber = '';
+      }
+
+      if (!dateOfBirth) {
+        formStore.errorMessages.dateOfBirth = 'Date of Birth is required';
+      } else {
+        formStore.errorMessages.dateOfBirth = '';
+      }
+
+      if (!dataPrivacyConsent) {
+        //
+      }
+
+      if (!Object.values(formStore.errorMessages).some(error => error !== '')) {
+        formStore.openModal();
+      }
     };
 
+    const validateEmail = (email) => {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    };
     const getErrorMessage = (fieldName) => {
-      return fieldName === 'address' ? errorMessages.value : '';
+      return formStore.errorMessages[fieldName] || '';
     };
     
 
-    watch(name, () => {
-      errorMessages.value = '';
-    });
-
-   
-
     return {
-      countries,
-      form,
-      errorMessages,
-      formHasErrors,
-      addressCheck,
-      resetForm,
+      formStore,
+      suffixes,
+      genders,
       submit,
-      getErrorMessage,
-      name,
-      email,
-      password,
-      address,
-      city,
-      state,
-      zip,
-      country
+      validateEmail,
+      getErrorMessage
     };
   }
 };
@@ -86,94 +92,148 @@ export default {
       <v-card class="rounded-lg shadow-lg">
         <v-card-text>
           <h2 class="text-2xl font-bold mb-6 text-center">Create Account</h2>
+          
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-text-field
+                v-model="formStore.firstName"
+                :error-messages="getErrorMessage('firstName')"
+                :rules="[() => !!formStore.firstName || 'First Name is required']"
+                label="First Name"
+                required
+                outlined
+                class="mb-4"
+              ></v-text-field>
+            </v-col>
+            
+            <v-col cols="12" md="4">
+              <v-text-field
+                v-model="formStore.middleName"
+                label="Middle Name"
+                outlined
+                class="mb-4"
+              ></v-text-field>
+            </v-col>
+            
+            <v-col cols="12" md="4">
+              <v-text-field
+                v-model="formStore.lastName"
+                :error-messages="getErrorMessage('lastName')"
+                :rules="[() => !!formStore.lastName || 'Last Name is required']"
+                label="Last Name"
+                required
+                outlined
+                class="mb-4"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-select
+                v-model="formStore.suffix"
+                :items="suffixes"
+                label="Suffix"
+                outlined
+                class="mb-4"
+              ></v-select>
+            </v-col>
+            
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="formStore.contactNumber"
+                :error-messages="getErrorMessage('contactNumber')"
+                :rules="[() => !!formStore.contactNumber || 'Contact number is required']"
+                required
+                label="Contact Number"
+                outlined
+                class="mb-4"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="formStore.dateOfBirth"
+                    label="Date of Birth"
+                    :error-messages="getErrorMessage('dateOfBirth')"
+                    :rules="[() => !!formStore.dateOfBirth || 'Date of birth is required']"
+                    required
+                    v-on="on"
+                    outlined
+                    class="mb-4"
+                    type="date"
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="formStore.dateOfBirth" @input="$refs.menu.save($event)"></v-date-picker>
+              </v-menu>
+            </v-col>
+            
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="formStore.age"
+                label="Age"
+                outlined
+                class="mb-4"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-select
+                v-model="formStore.gender"
+                :items="genders"
+                label="Gender"
+                outlined
+                class="mb-4"
+              ></v-select>
+            </v-col>
+            
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="formStore.email"
+                :error-messages="getErrorMessage('email')"
+                :rules="[() => !!formStore.email || 'Email is required', () => validateEmail(formStore.email) || 'Invalid email format']"
+                label="Email"
+                required
+                outlined
+                class="mb-4"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          
           <v-text-field
-            v-model="name"
-            :error-messages="getErrorMessage('name')"
-            :rules="[() => !!name || 'This field is required']"
-            label="Full Name"
-            placeholder="John Doe"
-            required
-            outlined
-            class="mb-4"
-          ></v-text-field>
-          <v-text-field
-            v-model="email"
-            type="email"
-            :error-messages="getErrorMessage('email')"
-            :rules="[() => !!email || 'This field is required']"
-            label="Email"
-            placeholder="example@gmail.com"
-            required
-            outlined
-            class="mb-4"
-          ></v-text-field>
-          <v-text-field
-            v-model="password"
-            type="password"
+            v-model="formStore.password"
             :error-messages="getErrorMessage('password')"
-            :rules="[() => !!password || 'This field is required']"
+            :rules="[() => !!formStore.password || 'Password is required']"
             label="Password"
-            placeholder="password"
+            type="password"
             required
             outlined
             class="mb-4"
           ></v-text-field>
-
-          <v-text-field
-            v-model="address"
-            :rules="[
-              () => !!address || 'This field is required',
-              () => !!address && address.length <= 25 || 'Address must be less than 25 characters',
-              addressCheck
-            ]"
-            counter="25"
-            label="Address Line"
-            placeholder="Snowy Rock Pl"
+          
+          <v-checkbox
+            v-model="formStore.dataPrivacyConsent"
+            label="I agree to the data privacy policy"
             required
-            outlined
             class="mb-4"
-          ></v-text-field>
-          <v-text-field
-            v-model="city"
-            :rules="[() => !!city || 'This field is required', addressCheck]"
-            label="City"
-            placeholder="El Paso"
-            required
-            outlined
-            class="mb-4"
-          ></v-text-field>
-          <v-text-field
-            v-model="state"
-            :rules="[() => !!state || 'This field is required']"
-            label="State/Province/Region"
-            placeholder="TX"
-            required
-            outlined
-            class="mb-4"
-          ></v-text-field>
-          <v-text-field
-            v-model="zip"
-            :rules="[() => !!zip || 'This field is required']"
-            label="ZIP / Postal Code"
-            placeholder="79938"
-            required
-            outlined
-            class="mb-4"
-          ></v-text-field>
-          <v-autocomplete
-            v-model="country"
-            :items="countries"
-            :rules="[() => !!country || 'This field is required']"
-            label="Country"
-            placeholder="Select..."
-            required
-            outlined
-            class="mb-6"
-          ></v-autocomplete>
+          ></v-checkbox>
+          
         </v-card-text>
         <v-divider class="mt-6"></v-divider>
         <v-card-actions class="justify-end">
-          <v-btn color="blue darken-2" @click="resetForm" class="mr-4">
+          <v-btn color="blue darken-2" @click="formStore.resetForm" class="mr-4">
             Cancel
           </v-btn>
           <v-btn color="primary" @click="submit">
@@ -187,6 +247,48 @@ export default {
       </p>
     </v-col>
   </v-row>
+
+  <v-dialog v-model="formStore.modalOpen" max-width="600">
+    <v-card>
+      <v-card-title class="headline">User Details</v-card-title>
+      <v-card-text>
+        <div>
+          <strong>First Name:</strong> {{ formStore.firstName }}
+        </div>
+        <div>
+          <strong>Middle Name:</strong> {{ formStore.middleName }}
+        </div>
+        <div>
+          <strong>Last Name:</strong> {{ formStore.lastName }}
+        </div>
+        <div>
+          <strong>Suffix:</strong> {{ formStore.suffix }}
+        </div>
+        <div>
+          <strong>Contact Number:</strong> {{ formStore.contactNumber }}
+        </div>
+        <div>
+          <strong>Date of Birth:</strong> {{ formStore.dateOfBirth }}
+        </div>
+        <div>
+          <strong>Age:</strong> {{ formStore.age }}
+        </div>
+        <div>
+          <strong>Gender:</strong> {{ formStore.gender }}
+        </div>
+        <div>
+          <strong>Email:</strong> {{ formStore.email }}
+        </div>
+        <div>
+          <strong>Password:</strong> {{ formStore.password }}
+        </div>
+        <div>
+          <strong>Data Privacy Consent:</strong> {{ formStore.dataPrivacyConsent ? 'Agreed' : 'Not Agreed' }}
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="blue darken-2" @click="formStore.closeModal">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog> 
 </template>
-
-
